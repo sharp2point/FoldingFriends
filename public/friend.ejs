@@ -4,9 +4,14 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="./public/components/user/user.js" type="module"></script>
     <title>Get Friend</title>
   </head>
   <body>
     <h1>GET FRIEND</h1>
+    <% if (user) { %>
+      <vk-user user-photo = "<%= user.photo %>" user-name="<%= user.fist_name %> <%= user.last_name %> <%= user.counters.friends %>"/>
+    
+    <% } %>
   </body>
 </html>

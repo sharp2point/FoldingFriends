@@ -2,6 +2,7 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import fastifyStatic from "@fastify/static";
 import fastifyView from "@fastify/view";
+import * as ejs from "ejs";
 
 import path from "path";
 import fetch from "node-fetch";
@@ -39,6 +40,18 @@ class UserModel {
   static fromJson(json) {
     return Object.assign(new UserModel(), json);
   }
+  getData() {
+    return {
+      id: this.id,
+      first_name: this.first_name,
+      last_name: this.last_name,
+      bdate: this.bdate,
+      sex: this.sex,
+      online: this.online,
+      photo: this.photo_max_orig,
+      counters: this.counters,
+    };
+  }
 }
 
 let oauth_model = OAuthModel.getOAuthModel(); // объект хранящий данные авторизации
@@ -49,7 +62,6 @@ let token = null;
 
 const client_id = 51559844;
 const redirect_uri = "http://localhost:1234/auth";
-const scope = 6;
 const secret = "xqc7PeuY37EpQAAQ2uTP";
 
 function authPath(client_id, redirect_uri, scope) {
@@ -80,7 +92,7 @@ fastify.register(fastifyStatic, {
 
 fastify.register(fastifyView, {
   engine: {
-    ejs: require("ejs"),
+    ejs: ejs,
   },
 });
 
@@ -93,7 +105,7 @@ fastify.get("/", (request, reply) => {
     .redirect(authPath(client_id, redirect_uri, "friends, photos"));
 });
 fastify.get("/app", (request, reply) => {
-  return reply.sendFile("friend.html");
+  reply.view("/public/friend.ejs", { user: user_model.getData() });
 });
 fastify.get("/auth", async (request, reply) => {
   /* маршрут редиректа авторизации - получение кода */
