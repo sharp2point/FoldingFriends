@@ -1,6 +1,9 @@
 import Template from "./template.js";
 
 export class User extends HTMLElement {
+  constructor(){
+    super();
+  }
   connectedCallback() {
     this.innerHTML = Template.render();
     this.dom = Template.map(this);
