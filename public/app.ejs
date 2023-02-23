@@ -14,19 +14,34 @@
             <% if (user) { %>
                 <%- include('vkOwner'), {user:user} %>
             <% } %>
+            
         </div>
-        <div class="friends-host">
-            <% if (friends) { %>
-                <%- include('vkFriends') %>
-                <% friends.forEach(function(user){ %>
-                    <div class="friend">
-                        <%- include('vkOwner', {user: user.getData()}); %>
-                    </div>
-                <% }); %>
-            <% } %>
-        </div>
+        <input type="text" name="filter" id="filter" placeholder="фильтр по имени"/>
+        <div class="friends-host"></div>
         
     </div>
-    
+    <script type="module">
+        const friendsHost = document.querySelector(".friends-host");
+        let template = ``;
+        function addFriends(json){
+            const count= json.response.count;
+            const friends = json.response.items;
+            friends.forEach(friend=>{
+                template+=`<div class="friend">
+                            <vk-user user-id="${friend.id}" user-photo="${friend.photo_max_orig}" user-name="${friend.first_name} ${friend.last_name}"/>
+                        </div>`
+            })
+            friendsHost.innerHTML = template;
+            console.log(json)
+        }
+        fetch("http://127.0.0.1:1234/api/friends/get")
+        .then(res=>res.json()).then((json)=>{
+            addFriends(json);
+        })
+        .catch(err=>console.log(err))
+    /* ------------------ FILTER -------------------- */
+
+
+    </script>    
 </body>
 </html>
