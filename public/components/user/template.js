@@ -1,8 +1,8 @@
 export default {
   map(scope) {
     return {
-      photo: scope.querySelector(".user-photo"),
-      name: scope.querySelector(".user-name"),
+      photo: scope.shadowRoot.querySelector(".user-photo"),
+      name: scope.shadowRoot.querySelector(".user-name"),
     };
   },
   render(props) {

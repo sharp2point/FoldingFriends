@@ -18,18 +18,18 @@
         </div>
         <div class="friends-host">
             <div class="main-panel panel">
-                <input type="text" name="filter" id="filter" placeholder="фильтр по имени"/>
-                <div class="friends-stack"></div>
+                <input type="text" name="filter" id="filter" class="filter-main-folder" placeholder="фильтр по имени"/>
+                <div class="friends-folder folder-main"></div>
             </div>
             <div class="select-panel panel">
-                <input type="text" name="filter" id="filter" placeholder="фильтр по имени"/>
-                <div class="friends-stack"></div>
+                <input type="text" name="filter" id="filter" class="filter-select-folder" placeholder="фильтр по имени"/>
+                <div class="friends-folder folder-select"></div>
             </div>
         </div> 
     </div>
 
     <script type="module">
-        const friendsHost = document.querySelector(".friends-stack");
+        const friendsHost = document.querySelector(".friends-folder");
         let template = ``;
         let friendsItems;
         
@@ -62,6 +62,20 @@
                     item.classList.add("hide");
                 }
             })
+        })
+
+    /* ----------------- EVENT ON FRIEND ------------- */
+        const mainFolder = document.querySelector(".folder-main");
+        const selectFolder = document.querySelector(".folder-select");
+        const friendClickHandler=(friend,from,to)=>{
+            from.removeChild(friend);
+            to.appendChild(friend);            
+        }
+        mainFolder.addEventListener("click",(e)=>{
+            friendClickHandler(e.target.parentNode,mainFolder,selectFolder)
+        });
+        selectFolder.addEventListener("click",(e)=>{
+            friendClickHandler(e.target.parentNode,selectFolder,mainFolder)
         })
 
     </script>    

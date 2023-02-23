@@ -3,9 +3,10 @@ import Template from "./template.js";
 export class User extends HTMLElement {
   constructor(){
     super();
+    this.root = this.attachShadow({mode: 'open'});
   }
-  connectedCallback() {
-    this.innerHTML = Template.render();
+  connectedCallback() {    
+    this.root.innerHTML = Template.render();
     this.dom = Template.map(this);
     this.id = this.getAttribute("user-id");
     this.name = this.getAttribute("user-name")
