@@ -14,3 +14,38 @@
 .hide{
     display:none;
 }
+.friends-host{
+    width:600px;
+    height:500px;
+    display:flex;
+    flex-direction:row;
+    justify-content: space-between;
+    align-items: flex-start;
+    border:1px solid black;
+    padding:1rem;
+    gap:0.5rem;
+}
+.panel{
+    width:48%;
+    height:100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    overflow: none;
+    border:1px solid black;
+    padding:0.5rem;
+}
+.friends-stack{
+    width:100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    overflow: none;
+    overflow-y: scroll;
+    border:1px solid black;
+}
+.friends-stack::-webkit-scrollbar{
+    display:none;
+}

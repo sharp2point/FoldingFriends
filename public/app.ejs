@@ -16,12 +16,20 @@
             <% } %>
             
         </div>
-        <input type="text" name="filter" id="filter" placeholder="фильтр по имени"/>
-        <div class="friends-host"></div>
-        
+        <div class="friends-host">
+            <div class="main-panel panel">
+                <input type="text" name="filter" id="filter" placeholder="фильтр по имени"/>
+                <div class="friends-stack"></div>
+            </div>
+            <div class="select-panel panel">
+                <input type="text" name="filter" id="filter" placeholder="фильтр по имени"/>
+                <div class="friends-stack"></div>
+            </div>
+        </div> 
     </div>
+
     <script type="module">
-        const friendsHost = document.querySelector(".friends-host");
+        const friendsHost = document.querySelector(".friends-stack");
         let template = ``;
         let friendsItems;
         
