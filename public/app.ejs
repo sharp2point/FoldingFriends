@@ -23,6 +23,9 @@
     <script type="module">
         const friendsHost = document.querySelector(".friends-host");
         let template = ``;
+        let friendsItems;
+        
+
         function addFriends(json){
             const count= json.response.count;
             const friends = json.response.items;
@@ -32,7 +35,7 @@
                         </div>`
             })
             friendsHost.innerHTML = template;
-            console.log(json)
+            friendsItems = [...friendsHost.querySelectorAll("vk-user")];
         }
         fetch("http://127.0.0.1:1234/api/friends/get")
         .then(res=>res.json()).then((json)=>{
@@ -40,7 +43,18 @@
         })
         .catch(err=>console.log(err))
     /* ------------------ FILTER -------------------- */
+        const filter = document.querySelector("#filter");
 
+        filter.addEventListener("keyup",(e)=>{
+            friendsItems.forEach(item=>{   
+                        
+                if(item.getName().toLowerCase().startsWith(e.target.value.toLowerCase())){
+                    item.classList.remove("hide");
+                }else{
+                    item.classList.add("hide");
+                }
+            })
+        })
 
     </script>    
 </body>
