@@ -12,7 +12,7 @@
 
 ![My Image](screens/simple.png)
 ![My Image](screens/filter.png)
-![My Image](dnd/avatars.png)
-![My Image](dnd_end/DND.png)
+![My Image](screens/dnd.png)
+![My Image](screens/dnd_end.png)
 
 
