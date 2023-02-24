@@ -103,22 +103,31 @@
         })
         .catch((err) => console.log(err));
       /* ------------------ FILTER -------------------- */
-      const filters = document.querySelectorAll(".filter");
+
+      function filterFriends(friends,filter) {
+        friends.forEach((item) => {
+          if (
+            item
+              .getName()
+              .toLowerCase()
+              .startsWith(filter.toLowerCase())
+          ) {
+            item.classList.remove("hide");
+          } else {
+            item.classList.add("hide");
+          }
+        });
+      }
+
+      const filters = [...document.querySelectorAll(".filter")];
 
       filters.forEach((filter) =>
         filter.addEventListener("keyup", (e) => {
-          friendsItems.forEach((item) => {
-            if (
-              item
-                .getName()
-                .toLowerCase()
-                .startsWith(e.target.value.toLowerCase())
-            ) {
-              item.classList.remove("hide");
-            } else {
-              item.classList.add("hide");
-            }
-          });
+          if (e.target.classList.contains("filter-main-folder")) {
+            filterFriends([...mainFolder.querySelectorAll("vk-user")],e.target.value);
+          } else if (e.target.classList.contains("filter-select-folder")) {
+            filterFriends([...selectFolder.querySelectorAll("vk-user")],e.target.value);
+          }
         })
       );
 
@@ -132,6 +141,7 @@
       mainFolder.addEventListener("click", (e) => {
         const friend = e.target;
         if (friend.tagName.toLowerCase() === "vk-user") {
+          friend.setState(true);
           friendTransfer(friend, friend.parentNode, selectFolder);
         }
       });
@@ -139,6 +149,7 @@
       selectFolder.addEventListener("click", (e) => {
         const friend = e.target;
         if (friend.tagName.toLowerCase() === "vk-user") {
+          friend.setState(false);
           friendTransfer(friend, friend.parentNode, mainFolder);
         }
       });
