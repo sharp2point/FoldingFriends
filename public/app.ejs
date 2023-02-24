@@ -87,9 +87,12 @@
             `${friend.first_name} ${friend.last_name}`,
             friend.photo_max_orig
           );
-          savedFriends.includes(friend.id)
-            ? selectFolder.appendChild(user)
-            : mainFolder.appendChild(user);
+          if (savedFriends.includes(friend.id)) {
+            user.setState(true);
+            selectFolder.appendChild(user);
+          } else {
+            mainFolder.appendChild(user);
+          }
         });
 
         friendsItems = [...mainFolder.querySelectorAll("vk-user")];
