@@ -77,18 +77,23 @@
 
       let friendsItems;
 
-      function addFriends(json) {
+      function addFriends(json, savedFriends) {
         const count = json.response.count;
         const friends = json.response.items;
+
         friends.forEach((friend) => {
           const user = new User(
             friend.id,
             `${friend.first_name} ${friend.last_name}`,
             friend.photo_max_orig
           );
-          mainFolder.appendChild(user);
+          savedFriends.includes(friend.id)
+            ? selectFolder.appendChild(user)
+            : mainFolder.appendChild(user);
         });
+
         friendsItems = [...mainFolder.querySelectorAll("vk-user")];
+
         friendsItems.forEach((item) => {
           item.setAttribute("draggable", true);
           item.addEventListener("dragstart", (e) => {
@@ -96,22 +101,12 @@
           });
         });
       }
-      fetch("http://127.0.0.1:1234/api/friends/get")
-        .then((res) => res.json())
-        .then((json) => {
-          addFriends(json);
-        })
-        .catch((err) => console.log(err));
+
       /* ------------------ FILTER -------------------- */
 
-      function filterFriends(friends,filter) {
+      function filterFriends(friends, filter) {
         friends.forEach((item) => {
-          if (
-            item
-              .getName()
-              .toLowerCase()
-              .startsWith(filter.toLowerCase())
-          ) {
+          if (item.getName().toLowerCase().startsWith(filter.toLowerCase())) {
             item.classList.remove("hide");
           } else {
             item.classList.add("hide");
@@ -124,9 +119,15 @@
       filters.forEach((filter) =>
         filter.addEventListener("keyup", (e) => {
           if (e.target.classList.contains("filter-main-folder")) {
-            filterFriends([...mainFolder.querySelectorAll("vk-user")],e.target.value);
+            filterFriends(
+              [...mainFolder.querySelectorAll("vk-user")],
+              e.target.value
+            );
           } else if (e.target.classList.contains("filter-select-folder")) {
-            filterFriends([...selectFolder.querySelectorAll("vk-user")],e.target.value);
+            filterFriends(
+              [...selectFolder.querySelectorAll("vk-user")],
+              e.target.value
+            );
           }
         })
       );
@@ -152,6 +153,25 @@
           friend.setState(false);
           friendTransfer(friend, friend.parentNode, mainFolder);
         }
+      });
+
+      /* -------------- LOCAL STORAGE ----------------- */
+      window.addEventListener("load", () => {
+        const savedFriends = localStorage.getItem("foldingFriends");
+        fetch("http://127.0.0.1:1234/api/friends/get")
+          .then((res) => res.json())
+          .then((json) => {
+            addFriends(json, savedFriends);
+          })
+          .catch((err) => console.log(err));
+      });
+      window.addEventListener("beforeunload", () => {
+        localStorage.setItem(
+          "foldingFriends",
+          [...selectFolder.querySelectorAll("vk-user")].map((item) =>
+            item.getId()
+          )
+        );
       });
     </script>
   </body>
