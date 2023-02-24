@@ -4,7 +4,7 @@
     padding:0;
     box-sizing: border-box;
 }
-#filter{
+.filter{
     width:200px;
     font-size: 1rem;
     line-height: 1.5rem;
@@ -38,6 +38,7 @@
 }
 .friends-folder{
     width:100%;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;

@@ -18,11 +18,11 @@
         </div>
         <div class="friends-host">
             <div class="main-panel panel">
-                <input type="text" name="filter" id="filter" class="filter-main-folder" placeholder="фильтр по имени"/>
+                <input type="text" name="filter" class="filter filter-main-folder" placeholder="фильтр по имени"/>
                 <div class="friends-folder folder-main"></div>
             </div>
             <div class="select-panel panel">
-                <input type="text" name="filter" id="filter" class="filter-select-folder" placeholder="фильтр по имени"/>
+                <input type="text" name="filter" class="filter filter-select-folder" placeholder="фильтр по имени"/>
                 <div class="friends-folder folder-select"></div>
             </div>
         </div> 
@@ -30,20 +30,43 @@
 
     <script type="module">
         const friendsHost = document.querySelector(".friends-folder");
-        let template = ``;
-        let friendsItems;
+        const mainFolder = document.querySelector(".folder-main");
+        const selectFolder = document.querySelector(".folder-select");
+        let dragFriend;
+
+        [mainFolder,selectFolder].forEach(folder=>{
+            folder.addEventListener("dragover",(e)=>{                
+                e.preventDefault();
+                e.dataTransfer.dropEffect = "move";
+            });
+            folder.addEventListener("drop",(e)=>{
+                e.preventDefault();
+                if(e.target.classList.contains("folder-select")){
+                    friendTransfer(dragFriend,dragFriend.parentNode,selectFolder)
+                }else if(e.target.classList.contains("folder-main")){
+                    friendTransfer(dragFriend,dragFriend.parentNode,mainFolder)
+                }
+            })
+        })
         
+        let template = ``;
+        let friendsItems;        
 
         function addFriends(json){
             const count= json.response.count;
             const friends = json.response.items;
             friends.forEach(friend=>{
                 template+=`<div class="friend">
-                            <vk-user user-id="${friend.id}" user-photo="${friend.photo_max_orig}" user-name="${friend.first_name} ${friend.last_name}"/>
+                            <vk-user draggable="true" user-id="${friend.id}" user-photo="${friend.photo_max_orig}" user-name="${friend.first_name} ${friend.last_name}"/>
                         </div>`
             })
             friendsHost.innerHTML = template;
             friendsItems = [...friendsHost.querySelectorAll("vk-user")];
+            friendsItems.forEach(item=>{
+                item.addEventListener("dragstart",(e)=>{
+                    dragFriend = e.target;
+                })
+            })
         }
         fetch("http://127.0.0.1:1234/api/friends/get")
         .then(res=>res.json()).then((json)=>{
@@ -51,9 +74,9 @@
         })
         .catch(err=>console.log(err))
     /* ------------------ FILTER -------------------- */
-        const filter = document.querySelector("#filter");
+        const filters = document.querySelectorAll(".filter");
 
-        filter.addEventListener("keyup",(e)=>{
+        filters.forEach(filter=>filter.addEventListener("keyup",(e)=>{
             friendsItems.forEach(item=>{   
                         
                 if(item.getName().toLowerCase().startsWith(e.target.value.toLowerCase())){
@@ -62,20 +85,26 @@
                     item.classList.add("hide");
                 }
             })
-        })
+        }))
 
     /* ----------------- EVENT ON FRIEND ------------- */
-        const mainFolder = document.querySelector(".folder-main");
-        const selectFolder = document.querySelector(".folder-select");
-        const friendClickHandler=(friend,from,to)=>{
+        
+        const friendTransfer=(friend,from,to)=>{
             from.removeChild(friend);
-            to.appendChild(friend);            
+            to.insertBefore(friend,to.firstChild);            
         }
         mainFolder.addEventListener("click",(e)=>{
-            friendClickHandler(e.target.parentNode,mainFolder,selectFolder)
+            const friend = e.target.parentNode;
+            if(e.target.tagName.toLowerCase() === "vk-user"){
+                friendTransfer(friend,friend.parentNode,selectFolder)
+            }
+            
         });
         selectFolder.addEventListener("click",(e)=>{
-            friendClickHandler(e.target.parentNode,selectFolder,mainFolder)
+            const friend = e.target.parentNode;
+            if(e.target.tagName.toLowerCase() === "vk-user"){
+                friendTransfer(friend,friend.parentNode,mainFolder)
+            }
         })
 
     </script>    
