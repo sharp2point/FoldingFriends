@@ -54,6 +54,8 @@ class UserModel {
   }
 }
 
+let friends = undefined;
+let progressLoadFriends = false;
 let oauth_model = OAuthModel.getOAuthModel(); // объект хранящий данные авторизации
 let user_model = undefined; // модель авторизованного пользователя
 let req_data_field = "bdate, online, photo_max_orig, sex, counters"; // запрашиваемые у VK API поля
@@ -76,8 +78,8 @@ function user_get(user_id, token, fields) {
   return `https://api.vk.com/method/users.get?user_ids=${user_id}&fields=${fields}&access_token=${token}&v=5.131`;
 }
 
-function friends_get(oauth_model, count, offset, fields) {
-  return `https://api.vk.com/method/friends.get?user_id=${oauth_model.user_id}&count=${count}&offset=${offset}&fields=${fields}&access_token=${oauth_model.access_token}&v=5.131`;
+function friends_get(oauth_model, count, offset, fields) {//&count=${count}&offset=${offset}
+  return `https://api.vk.com/method/friends.get?user_id=${oauth_model.user_id}&fields=${fields}&access_token=${oauth_model.access_token}&v=5.131`;
 }
 /*-----------------------------------------------------------------*/
 
@@ -98,24 +100,30 @@ fastify.register(fastifyView, {
 
 await fastify.register(cors, {});
 
+/* маршрут перенаправляет на авторизацию пользователя */
 fastify.get("/", (request, reply) => {
-  /* маршрут перенаправляет на авторизацию пользователя */
+  
   return reply
     .code(303)
     .redirect(authPath(client_id, redirect_uri, "friends, photos"));
 });
-fastify.get("/app", (request, reply) => {
-  fetch(friends_get(oauth_model,35,0,req_data_field)).then(res=>res.json()).then((json)=>{
-    const friends = json.response.items.map(item=>{
-      return UserModel.fromJson(item)
-    })
-    console.log(friends);
-    reply.view("/public/app.ejs", { user: user_model.getData(), friends: friends });
-  }).catch(err=>{
-    console.log("ERROR GET FRIENDS")
+
+/* маршрут API друзей */
+fastify.get("/api/friends/get",(request,reply)=>{
+  fetch(friends_get(oauth_model,35,0,req_data_field))
+  .then(res=>res.json())
+  .then((json)=>{ 
+      reply.send(JSON.stringify(json));  
   })
-  
+  .catch(err=> console.log("ERROR GET FRIENDS"));  
+})
+
+/* маршрут основная страница */ 
+fastify.get("/app", (request, reply) => {
+  reply.view("/public/app.ejs", { user: user_model.getData(), friends: friends });
 });
+
+/* маршрут авторизация */
 fastify.get("/auth", async (request, reply) => {
   /* маршрут редиректа авторизации - получение кода */
   code = request.query.code;

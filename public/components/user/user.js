@@ -1,17 +1,13 @@
 import Template from "./template.js";
 
 export class User extends HTMLElement {
-  constructor(){
+  constructor(id,name,photo){
     super();
-    this.root = this.attachShadow({mode: 'open'});
-  }
-  connectedCallback() {    
-    this.root.innerHTML = Template.render();
-    this.dom = Template.map(this);
-    this.id = this.getAttribute("user-id");
-    this.name = this.getAttribute("user-name")
-    this.dom.photo.src = this.getAttribute("user-photo");
-    this.dom.name.innerHTML = this.name;
+    this.attachShadow({mode: 'open'});
+    this.id = id;
+    this.name = name;
+    this.photo = photo;
+    this.shadowRoot.innerHTML = Template.render({name:this.name,photo:this.photo});
   }
   getId = ()=> this.id;
   getName = ()=> this.name;

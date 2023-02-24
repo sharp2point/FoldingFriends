@@ -1,112 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./public/base.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./public/base.css" />
     <script src="./public/src/index.js" type="module"></script>
     <title>Document</title>
-</head>
-<body>
+  </head>
+  <body>
     <div class="app">
-        <div class="owner-host">
-            <% if (user) { %>
-                <%- include('vkOwner'), {user:user} %>
-            <% } %>
-            
+      <!-- <div class="owner-host">
+        <% if (user) { %> <%- include('vkOwner'), {user:user} %> <% } %>
+      </div> -->
+      <div class="friends-host">
+        <header>
+          <h1>Выберите друзей</h1>
+          <button class="close-button"></button>
+        </header>
+        <div class="filter-host">
+          <input
+            type="text"
+            name="filter"
+            class="filter filter-main-folder"
+            placeholder="фильтр по имени"
+          />
+          <input
+            type="text"
+            name="filter"
+            class="filter filter-select-folder"
+            placeholder="фильтр по имени"
+          />
         </div>
-        <div class="friends-host">
-            <div class="main-panel panel">
-                <input type="text" name="filter" class="filter filter-main-folder" placeholder="фильтр по имени"/>
-                <div class="friends-folder folder-main"></div>
-            </div>
-            <div class="select-panel panel">
-                <input type="text" name="filter" class="filter filter-select-folder" placeholder="фильтр по имени"/>
-                <div class="friends-folder folder-select"></div>
-            </div>
-        </div> 
+        <div class="outer">
+          <div class="main-panel panel">
+            <div class="friends-folder folder-main"></div>
+          </div>
+          <div class="select-panel panel">
+            <div class="friends-folder folder-select"></div>
+          </div>
+        </div>
+        <footer></footer>
+      </div>
     </div>
 
     <script type="module">
-        const friendsHost = document.querySelector(".friends-folder");
-        const mainFolder = document.querySelector(".folder-main");
-        const selectFolder = document.querySelector(".folder-select");
-        let dragFriend;
+      import { User } from "./public/components/user/user.js";
+      const friendsHost = document.querySelector(".friends-folder");
+      const mainFolder = document.querySelector(".folder-main");
+      const selectFolder = document.querySelector(".folder-select");
+      let dragFriend;
 
-        [mainFolder,selectFolder].forEach(folder=>{
-            folder.addEventListener("dragover",(e)=>{                
-                e.preventDefault();
-                e.dataTransfer.dropEffect = "move";
-            });
-            folder.addEventListener("drop",(e)=>{
-                e.preventDefault();
-                if(e.target.classList.contains("folder-select")){
-                    friendTransfer(dragFriend,dragFriend.parentNode,selectFolder)
-                }else if(e.target.classList.contains("folder-main")){
-                    friendTransfer(dragFriend,dragFriend.parentNode,mainFolder)
-                }
-            })
-        })
-        
-        let template = ``;
-        let friendsItems;        
-
-        function addFriends(json){
-            const count= json.response.count;
-            const friends = json.response.items;
-            friends.forEach(friend=>{
-                template+=`<div class="friend">
-                            <vk-user draggable="true" user-id="${friend.id}" user-photo="${friend.photo_max_orig}" user-name="${friend.first_name} ${friend.last_name}"/>
-                        </div>`
-            })
-            friendsHost.innerHTML = template;
-            friendsItems = [...friendsHost.querySelectorAll("vk-user")];
-            friendsItems.forEach(item=>{
-                item.addEventListener("dragstart",(e)=>{
-                    dragFriend = e.target;
-                })
-            })
-        }
-        fetch("http://127.0.0.1:1234/api/friends/get")
-        .then(res=>res.json()).then((json)=>{
-            addFriends(json);
-        })
-        .catch(err=>console.log(err))
-    /* ------------------ FILTER -------------------- */
-        const filters = document.querySelectorAll(".filter");
-
-        filters.forEach(filter=>filter.addEventListener("keyup",(e)=>{
-            friendsItems.forEach(item=>{   
-                        
-                if(item.getName().toLowerCase().startsWith(e.target.value.toLowerCase())){
-                    item.classList.remove("hide");
-                }else{
-                    item.classList.add("hide");
-                }
-            })
-        }))
-
-    /* ----------------- EVENT ON FRIEND ------------- */
-        
-        const friendTransfer=(friend,from,to)=>{
-            from.removeChild(friend);
-            to.insertBefore(friend,to.firstChild);            
-        }
-        mainFolder.addEventListener("click",(e)=>{
-            const friend = e.target.parentNode;
-            if(e.target.tagName.toLowerCase() === "vk-user"){
-                friendTransfer(friend,friend.parentNode,selectFolder)
-            }
-            
+      [mainFolder, selectFolder].forEach((folder) => {
+        folder.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = "move";
         });
-        selectFolder.addEventListener("click",(e)=>{
-            const friend = e.target.parentNode;
-            if(e.target.tagName.toLowerCase() === "vk-user"){
-                friendTransfer(friend,friend.parentNode,mainFolder)
+        folder.addEventListener("drop", (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          if (e.target.tagName === "VK-USER") {
+            if (e.target.parentNode.classList.contains("folder-select")) {
+              friendTransfer(dragFriend, dragFriend.parentNode, selectFolder);
+            } else if (e.target.parentNode.classList.contains("folder-main")) {
+              friendTransfer(dragFriend, dragFriend.parentNode, mainFolder);
             }
-        })
+          } else {
+            if (e.target.classList.contains("folder-select")) {
+              friendTransfer(dragFriend, dragFriend.parentNode, selectFolder);
+            } else if (e.target.classList.contains("folder-main")) {
+              friendTransfer(dragFriend, dragFriend.parentNode, mainFolder);
+            }
+          }
+        });
+      });
 
-    </script>    
-</body>
+      let friendsItems;
+
+      function addFriends(json) {
+        const count = json.response.count;
+        const friends = json.response.items;
+        friends.forEach((friend) => {
+          const user = new User(
+            friend.id,
+            `${friend.first_name} ${friend.last_name}`,
+            friend.photo_max_orig
+          );
+          mainFolder.appendChild(user);
+        });
+        friendsItems = [...mainFolder.querySelectorAll("vk-user")];
+        friendsItems.forEach((item) => {
+          item.setAttribute("draggable", true);
+          item.addEventListener("dragstart", (e) => {
+            dragFriend = e.target;
+          });
+        });
+      }
+      fetch("http://127.0.0.1:1234/api/friends/get")
+        .then((res) => res.json())
+        .then((json) => {
+          addFriends(json);
+        })
+        .catch((err) => console.log(err));
+      /* ------------------ FILTER -------------------- */
+      const filters = document.querySelectorAll(".filter");
+
+      filters.forEach((filter) =>
+        filter.addEventListener("keyup", (e) => {
+          friendsItems.forEach((item) => {
+            if (
+              item
+                .getName()
+                .toLowerCase()
+                .startsWith(e.target.value.toLowerCase())
+            ) {
+              item.classList.remove("hide");
+            } else {
+              item.classList.add("hide");
+            }
+          });
+        })
+      );
+
+      /* ----------------- EVENT ON FRIEND ------------- */
+
+      const friendTransfer = (friend, from, to) => {
+        from.removeChild(friend);
+        to.insertBefore(friend, to.firstChild);
+      };
+
+      mainFolder.addEventListener("click", (e) => {
+        const friend = e.target;
+        if (friend.tagName.toLowerCase() === "vk-user") {
+          friendTransfer(friend, friend.parentNode, selectFolder);
+        }
+      });
+
+      selectFolder.addEventListener("click", (e) => {
+        const friend = e.target;
+        if (friend.tagName.toLowerCase() === "vk-user") {
+          friendTransfer(friend, friend.parentNode, mainFolder);
+        }
+      });
+    </script>
+  </body>
 </html>

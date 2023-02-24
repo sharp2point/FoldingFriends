@@ -1,52 +1,152 @@
-:root{
-    font-size: 16px;
-    margin:0;
-    padding:0;
-    box-sizing: border-box;
+:root {
+  font-size: 16px;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-.filter{
-    width:200px;
-    font-size: 1rem;
-    line-height: 1.5rem;
-    padding:0.5rem;
-    margin:0.5rem;
+body {
+  width: 100vw;
+  height: 100vh;
+  background: rgb(20, 34, 65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.hide{
-    display:none;
+vk-user{
+    display:block;
 }
-.friends-host{
-    width:600px;
-    height:500px;
-    display:flex;
-    flex-direction:row;
-    justify-content: space-between;
-    align-items: flex-start;
-    border:1px solid black;
-    padding:1rem;
-    gap:0.5rem;
-}
-.panel{
-    width:48%;
-    height:100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    overflow: none;
-    border:1px solid black;
-    padding:0.5rem;
-}
-.friends-folder{
+.drag-place{
+    position:absolute;
     width:100%;
-    min-height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    overflow: none;
-    overflow-y: scroll;
-    border:1px solid black;
+    height: 100%;
+    border:5px solid red;
+    background: #F0F0F0;
 }
-.friends-folder::-webkit-scrollbar{
-    display:none;
+.filter-host{
+    width:100%;
+    height:45px;
+    background: #F0F0F0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+footer{
+    display: block;
+    width:100%;
+    height:45px;
+}
+.filter {
+  width: 45%;
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 0.8rem;
+  line-height: 1rem;
+  padding: 0.5rem;
+  margin: 0.5rem;
+  border-radius: 40px;
+  border: none;
+}
+.hide {
+  display: none;
+}
+.friends-host {
+  width: 600px;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  border-radius: 0.8rem;
+  overflow: hidden;
+  background: white;
+}
+.friends-host .outer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: white;
+}
+.friends-host header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 46px;
+
+  background: #fe8663;
+
+  padding-inline: 0.8rem;
+}
+.friends-host header h1 {
+  color: white;
+  font-family: sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 1.3rem;
+  line-height: 1.9rem;
+}
+.close-button {
+  width: 16px;
+  height: 16px;
+  background: transparent;
+  border: none;
+  margin-right: 36px;
+  margin-bottom: 6px;
+  transform-origin: center;
+  transition: all 0.1s ease-in;
+}
+.close-button:hover {
+  transform: scale(1.1) translateX(-3px);
+}
+.close-button::before {
+  position: absolute;
+  content: "";
+  width: 18px;
+  height: 5px;
+  border-radius: 3px;
+  background-color: white;
+  transform: rotate(45deg);
+}
+.close-button::after {
+  position: absolute;
+  content: "";
+  width: 18px;
+  height: 5px;
+  border-radius: 3px;
+  background-color: white;
+  transform: rotate(-45deg);
+}
+.friends-host footer {
+  width: 100%;
+  height: 46px;
+  background: #f0f0f0;
+}
+.panel {
+  width: 48%;
+  height: 95%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  overflow: none;
+  padding: 0.5rem;
+}
+.friends-folder {
+  width: 100%;
+  min-height: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  overflow: none;
+  overflow-y: scroll;
+}
+.friends-folder::-webkit-scrollbar {
+  display: none;
 }
