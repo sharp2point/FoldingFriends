@@ -137,6 +137,9 @@ footer{
   overflow: none;
   padding: 0.5rem;
 }
+.main-panel{
+    border-right:1px solid #D2D2D2;
+}
 .friends-folder {
   width: 100%;
   min-height: 80%;

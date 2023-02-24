@@ -56,22 +56,22 @@
           e.preventDefault();
           e.dataTransfer.dropEffect = "move";
         });
+
+        function moveFriend(target) {
+          if (target.classList.contains("folder-select")) {
+            dragFriend.setState(true);
+            friendTransfer(dragFriend, dragFriend.parentNode, selectFolder);
+          } else if (target.classList.contains("folder-main")) {
+            dragFriend.setState(false);
+            friendTransfer(dragFriend, dragFriend.parentNode, mainFolder);
+          }
+        }
         folder.addEventListener("drop", (e) => {
           e.stopPropagation();
           e.preventDefault();
-          if (e.target.tagName === "VK-USER") {
-            if (e.target.parentNode.classList.contains("folder-select")) {
-              friendTransfer(dragFriend, dragFriend.parentNode, selectFolder);
-            } else if (e.target.parentNode.classList.contains("folder-main")) {
-              friendTransfer(dragFriend, dragFriend.parentNode, mainFolder);
-            }
-          } else {
-            if (e.target.classList.contains("folder-select")) {
-              friendTransfer(dragFriend, dragFriend.parentNode, selectFolder);
-            } else if (e.target.classList.contains("folder-main")) {
-              friendTransfer(dragFriend, dragFriend.parentNode, mainFolder);
-            }
-          }
+          e.target.tagName === "VK-USER"
+            ? moveFriend(e.target.parentNode)
+            : moveFriend(e.target);
         });
       });
 
