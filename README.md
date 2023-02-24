@@ -11,8 +11,11 @@
 ### Скриншоты
 
 ![My Image](screens/simple.png)
+## Фильтрация по имени
 ![My Image](screens/filter.png)
+## Drag And Drop
 ![My Image](screens/dnd.png)
+
 ![My Image](screens/dnd_end.png)
 
 
