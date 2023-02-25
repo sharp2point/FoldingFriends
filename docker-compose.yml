@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  back_app:
+    container_name: vktrix
+    build: ./app
+    # restart: unless-stopped
+    command: npm run start
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - HOST="0.0.0.0"
+      - APPID=51565511
+      - SECRET=y3h2HHCr02GT3HxyS4ov
+      - REDIRECT=http://localhost:3000/auth
+    

@@ -54,6 +54,12 @@ class UserModel {
   }
 }
 
+let PORT = process.env.PORT;
+let HOST = process.env.HOST;
+const client_id = process.env.APPID;
+const redirect_uri = process.env.REDIRECT;
+const secret = process.env.SECRET;
+
 let friends = undefined;
 let progressLoadFriends = false;
 let oauth_model = OAuthModel.getOAuthModel(); // объект хранящий данные авторизации
@@ -62,9 +68,9 @@ let req_data_field = "bdate, online, photo_max_orig, sex, counters"; // запр
 let code = null;
 let token = null;
 
-const client_id = 51559844;
-const redirect_uri = "http://localhost:1234/auth";
-const secret = "xqc7PeuY37EpQAAQ2uTP";
+
+
+console.log(PORT, HOST, client_id , redirect_uri, secret)
 
 function authPath(client_id, redirect_uri, scope) {
   return `https://oauth.vk.com/authorize?client_id=${client_id}&display=page&redirect_uri=${redirect_uri}&scope=${scope}&response_type=code&v=5.131`;
@@ -78,7 +84,8 @@ function user_get(user_id, token, fields) {
   return `https://api.vk.com/method/users.get?user_ids=${user_id}&fields=${fields}&access_token=${token}&v=5.131`;
 }
 
-function friends_get(oauth_model, count, offset, fields) {//&count=${count}&offset=${offset}
+function friends_get(oauth_model, count, offset, fields) {
+  //&count=${count}&offset=${offset}
   return `https://api.vk.com/method/friends.get?user_id=${oauth_model.user_id}&fields=${fields}&access_token=${oauth_model.access_token}&v=5.131`;
 }
 /*-----------------------------------------------------------------*/
@@ -98,29 +105,31 @@ fastify.register(fastifyView, {
   },
 });
 
-await fastify.register(cors, {});
+// fastify.register(cors, {});
 
 /* маршрут перенаправляет на авторизацию пользователя */
 fastify.get("/", (request, reply) => {
-  
   return reply
     .code(303)
     .redirect(authPath(client_id, redirect_uri, "friends, photos"));
 });
 
 /* маршрут API друзей */
-fastify.get("/api/friends/get",(request,reply)=>{
-  fetch(friends_get(oauth_model,35,0,req_data_field))
-  .then(res=>res.json())
-  .then((json)=>{ 
-      reply.send(JSON.stringify(json));  
-  })
-  .catch(err=> console.log("ERROR GET FRIENDS"));  
-})
+fastify.get("/api/friends/get", (request, reply) => {
+  fetch(friends_get(oauth_model, 35, 0, req_data_field))
+    .then((res) => res.json())
+    .then((json) => {
+      reply.send(JSON.stringify(json));
+    })
+    .catch((err) => console.log("ERROR GET FRIENDS"));
+});
 
-/* маршрут основная страница */ 
+/* маршрут основная страница */
 fastify.get("/app", (request, reply) => {
-  reply.view("/public/app.ejs", { user: user_model.getData(), friends: friends });
+  reply.view("/public/app.ejs", {
+    user: user_model.getData(),
+    friends: friends,
+  });
 });
 
 /* маршрут авторизация */
@@ -148,12 +157,10 @@ fastify.get("/auth", async (request, reply) => {
   return reply.sendFile("404.html");
 });
 
-const start = async () => {
-  try {
-    await fastify.listen({ port: 1234 });
-  } catch (err) {
+fastify.listen({ port: PORT, host: '0.0.0.0' }, (err, address) => {  
+  if (err) {
     fastify.log.error(err);
     process.exit(1);
   }
-};
-start();
+  fastify.log.info(`server listening on ${address}`)
+});

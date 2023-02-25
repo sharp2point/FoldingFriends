@@ -161,7 +161,7 @@
       /* -------------- LOCAL STORAGE ----------------- */
       window.addEventListener("load", () => {
         const savedFriends = localStorage.getItem("foldingFriends");
-        fetch("http://127.0.0.1:1234/api/friends/get")
+        fetch("http://localhost:3000/api/friends/get")
           .then((res) => res.json())
           .then((json) => {
             addFriends(json, savedFriends);
