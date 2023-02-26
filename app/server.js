@@ -68,10 +68,6 @@ let req_data_field = "bdate, online, photo_max_orig, sex, counters"; // запр
 let code = null;
 let token = null;
 
-
-
-console.log(PORT, HOST, client_id , redirect_uri, secret)
-
 function authPath(client_id, redirect_uri, scope) {
   return `https://oauth.vk.com/authorize?client_id=${client_id}&display=page&redirect_uri=${redirect_uri}&scope=${scope}&response_type=code&v=5.131`;
 }
@@ -105,7 +101,17 @@ fastify.register(fastifyView, {
   },
 });
 
-// fastify.register(cors, {});
+fastify.register(cors, {
+  origin: "*",
+  allowedHeaders: [
+    "Origin",
+    "X-Requested-With",
+    "Accept",
+    "Content-Type",
+    "Authorization",
+  ],
+  methods: ["GET", "PUT", "PATCH", "POST", "DELETE", "UPDATE"],
+});
 
 /* маршрут перенаправляет на авторизацию пользователя */
 fastify.get("/", (request, reply) => {
@@ -157,10 +163,10 @@ fastify.get("/auth", async (request, reply) => {
   return reply.sendFile("404.html");
 });
 
-fastify.listen({ port: PORT, host: '0.0.0.0' }, (err, address) => {  
+fastify.listen({ port: PORT, host: "0.0.0.0" }, (err, address) => {
   if (err) {
     fastify.log.error(err);
     process.exit(1);
   }
-  fastify.log.info(`server listening on ${address}`)
+  fastify.log.info(`server listening on ${address}`);
 });
