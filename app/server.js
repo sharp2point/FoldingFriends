@@ -101,18 +101,18 @@ fastify.register(fastifyView, {
   },
 });
 
-fastify.register(cors, {
-  origin: "*",
-  allowedHeaders: [
-    "Origin",
-    "X-Requested-With",
-    "Access-Control-Allow-Origin",
-    "Accept",
-    "Content-Type",
-    "Authorization",
-  ],
-  methods: ["GET", "PUT", "PATCH", "POST", "DELETE", "UPDATE"],
-});
+// fastify.register(cors, {
+//   origin: "*",
+//   allowedHeaders: [
+//     "Origin",
+//     "X-Requested-With",
+//     "Access-Control-Allow-Origin",
+//     "Accept",
+//     "Content-Type",
+//     "Authorization",
+//   ],
+//   methods: ["GET", "PUT", "PATCH", "POST", "DELETE", "UPDATE"],
+// });
 
 /* маршрут перенаправляет на авторизацию пользователя */
 fastify.get("/", (request, reply) => {
