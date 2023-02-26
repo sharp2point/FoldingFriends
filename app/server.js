@@ -106,6 +106,7 @@ fastify.register(cors, {
   allowedHeaders: [
     "Origin",
     "X-Requested-With",
+    "Access-Control-Allow-Origin",
     "Accept",
     "Content-Type",
     "Authorization",
