@@ -14,4 +14,14 @@ services:
       - APPID=51565511
       - SECRET=y3h2HHCr02GT3HxyS4ov
       - REDIRECT=http://localhost:3000/auth
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: vktrix_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf.prod:/etc/nginx/conf.d/nginx.conf
+    depends_on:
+      - back_app
     
